@@ -1,4 +1,5 @@
-<!DOCTYPE html><html lang="pt-BR">
+<!DOCTYPE html>
+<html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
@@ -8,6 +9,7 @@
   <script src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 <body>
+
   <header class="topbar">
     <div class="header-top">
       <h1>Protocolo TTPa – UTI</h1>
@@ -20,41 +22,51 @@
     <div class="leito-scroll" id="leito-scroll">
       <!-- Leitos gerados via JS -->
     </div>
-  </header>  <main class="painel">
+  </header>
+
+  <main class="painel">
     <div class="painel-esquerdo">
       <div id="titulo-leito" class="titulo-leito">Selecione um leito</div>
+
       <div class="painel-controle hidden" id="painel-controle">
         <button id="btn-iniciar" onclick="iniciarProtocolo()">Iniciar HNF + Controle TTPa</button>
         <button id="btn-suspender" class="btn-suspender hidden" onclick="suspenderProtocolo()">Suspender Protocolo</button>
+
         <div class="registro-info" id="registro-info"></div>
-        <div class="cronometro" id="cronometro">00:00:00</div><h3>Fluxo da Coleta</h3>
-    <div class="linha-tempo" id="linha-tempo">
-      <div class="ponto" data-step="1"></div>
-      <div class="ponto" data-step="2"></div>
-      <div class="ponto" data-step="3"></div>
-      <div class="ponto" data-step="4"></div>
-      <div class="ponto" data-step="5"></div>
-      <div class="ponto" data-step="6"></div>
+        <div class="cronometro" id="cronometro">00:00:00</div>
+
+        <h3>Fluxo da Coleta</h3>
+        <div class="linha-tempo" id="linha-tempo">
+          <div class="ponto" data-step="1"></div>
+          <div class="ponto" data-step="2"></div>
+          <div class="ponto" data-step="3"></div>
+          <div class="ponto" data-step="4"></div>
+          <div class="ponto" data-step="5"></div>
+          <div class="ponto" data-step="6"></div>
+        </div>
+
+        <div class="dados-coleta">
+          <input type="text" id="nomeTecnico" placeholder="Nome do Técnico (enfermagem ou coleta)">
+          <input type="text" id="nomeLab" placeholder="Técnico do Laboratório">
+          <input type="text" id="enfermeiroContato" placeholder="Enfermeiro que ligou">
+          <button onclick="abrirLeitor()" class="btn-coleta">Ler Código de Barras</button>
+          <video id="video-preview" class="hidden"></video>
+        </div>
+      </div>
     </div>
 
-    <div class="dados-coleta">
-      <input type="text" id="nomeTecnico" placeholder="Nome do Técnico (enfermagem ou coleta)">
-      <input type="text" id="nomeLab" placeholder="Técnico do Laboratório">
-      <input type="text" id="enfermeiroContato" placeholder="Enfermeiro que ligou">
-      <button onclick="abrirLeitor()" class="btn-coleta">Ler Código de Barras</button>
-      <video id="video-preview" class="hidden"></video>
+    <div class="painel-direito">
+      <iframe src="fluxograma.html" class="iframe-fluxograma" title="Fluxograma do Paciente"></iframe>
+      <div class="registro-fluxo" id="registro-fluxo"></div>
     </div>
-  </div>
-</div>
+  </main>
 
-<div class="painel-direito">
-  <iframe src="fluxograma.html" class="iframe-fluxograma" title="Fluxograma do Paciente"></iframe>
-  <div class="registro-fluxo" id="registro-fluxo"></div>
-</div>
-
-  </main>  <footer>
+  <footer>
     Powered by <strong>Tech4Life</strong>
-  </footer>  <!-- Popup: Instruções -->  <div id="popup-instrucoes" class="popup hidden">
+  </footer>
+
+  <!-- Popup: Instruções -->
+  <div id="popup-instrucoes" class="popup hidden">
     <div class="popup-content">
       <h2>Instruções Rápidas</h2>
       <p>
@@ -66,5 +78,8 @@
       </p>
       <button onclick="fecharPopup('instrucoes')">Fechar</button>
     </div>
-  </div>  <script src="script.js"></script></body>
+  </div>
+
+  <script src="script.js"></script>
+</body>
 </html>
