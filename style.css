@@ -234,3 +234,7 @@ footer {
     align-items: flex-start;
   }
 }
+#video-preview {
+  border: 2px solid #2563eb;
+  margin-top: 10px;
+}
