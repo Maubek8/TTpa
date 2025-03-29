@@ -14,6 +14,7 @@
         <button onclick="window.open('instru.html', '_blank')">Instruções</button>
         <button onclick="window.open('protocolo.html', '_blank')">Ver Protocolo</button>
         <button onclick="window.open('fluxograma.html', '_blank')">Fluxograma do Protocolo</button>
+        <button onclick="abrirPopup('tabela-funcoes')">Funções</button>
       </div>
     </div>
     <div class="leito-scroll" id="leito-scroll">
@@ -56,5 +57,28 @@
 
   </main>  <footer>
     Powered by <strong>Tech4Life</strong>
-  </footer>  <script src="script.js"></script></body>
+  </footer>  <!-- Popup com tabela de funções -->  <div id="popup-tabela-funcoes" class="popup hidden">
+    <div class="popup-content">
+      <h2>Funções do Sistema</h2>
+      <table style="width:100%; font-size: 0.9rem; border-collapse: collapse;">
+        <thead>
+          <tr style="background-color:#f3f4f6">
+            <th style="padding: 8px; border: 1px solid #ccc;">Botão</th>
+            <th style="padding: 8px; border: 1px solid #ccc;">Função</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr><td style="border:1px solid #ccc;padding:6px;">Selecionar Leito</td><td style="border:1px solid #ccc;padding:6px;">Ativa o painel da UTI correspondente</td></tr>
+          <tr><td style="border:1px solid #ccc;padding:6px;">Iniciar Protocolo</td><td style="border:1px solid #ccc;padding:6px;">Inicia o controle com contagem regressiva</td></tr>
+          <tr><td style="border:1px solid #ccc;padding:6px;">Suspender Protocolo</td><td style="border:1px solid #ccc;padding:6px;">Encerra o protocolo do leito</td></tr>
+          <tr><td style="border:1px solid #ccc;padding:6px;">Registrar Coleta</td><td style="border:1px solid #ccc;padding:6px;">Mostra formulário para registrar coleta</td></tr>
+          <tr><td style="border:1px solid #ccc;padding:6px;">Confirmar Coleta</td><td style="border:1px solid #ccc;padding:6px;">Registra coleta com data e equipe</td></tr>
+          <tr><td style="border:1px solid #ccc;padding:6px;">Instruções</td><td style="border:1px solid #ccc;padding:6px;">Abre página com orientações gerais</td></tr>
+          <tr><td style="border:1px solid #ccc;padding:6px;">Ver Protocolo</td><td style="border:1px solid #ccc;padding:6px;">Abre protocolo detalhado</td></tr>
+          <tr><td style="border:1px solid #ccc;padding:6px;">Fluxograma do Protocolo</td><td style="border:1px solid #ccc;padding:6px;">Abre imagem ou esquema visual</td></tr>
+        </tbody>
+      </table>
+      <button onclick="fecharPopup('tabela-funcoes')" style="margin-top:20px;">Fechar</button>
+    </div>
+  </div>  <script src="script.js"></script></body>
 </html>
