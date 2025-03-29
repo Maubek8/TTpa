@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <title>Fluxograma TTPa</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      background-color: #f9fafb;
+      padding: 40px;
+      text-align: center;
+    }
+    h1 {
+      color: #1f2937;
+    }
+    .fluxo {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 20px;
+      margin-top: 40px;
+    }
+    .box {
+      padding: 16px 24px;
+      background-color: #2563eb;
+      color: white;
+      border-radius: 10px;
+      width: fit-content;
+      font-weight: bold;
+      box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+    }
+    .seta {
+      font-size: 30px;
+      color: #6b7280;
+    }
+  </style>
+</head>
+<body>
+  <h1>Fluxograma do Protocolo TTPa – UTI</h1>
+
+  <div class="fluxo">
+    <div class="box">Paciente com indicação clínica</div>
+    <div class="seta">↓</div>
+    <div class="box">Acionar protocolo pelo ramal 8247</div>
+    <div class="seta">↓</div>
+    <div class="box">Registrar horário da 1ª coleta</div>
+    <div class="seta">↓</div>
+    <div class="box">Coletas sagradas a cada 6h (±15min)</div>
+    <div class="seta">↓</div>
+    <div class="box">Amostra citratada azul – prioridade laboratório</div>
+    <div class="seta">↓</div>
+    <div class="box">Análise e comunicação de resultados</div>
+    <div class="seta">↓</div>
+    <div class="box">Encerramento por ordem médica</div>
+    <div class="seta">↓</div>
+    <div class="box">Confirmação com o laboratório</div>
+  </div>
+</body>
+</html>
