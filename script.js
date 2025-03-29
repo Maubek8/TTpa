@@ -1,140 +1,66 @@
-const leitoScroll = document.getElementById('leito-scroll');
-const tituloLeito = document.getElementById('titulo-leito');
-const painelControle = document.getElementById('painel-controle');
-const cronometro = document.getElementById('cronometro');
-const linhaTempo = document.getElementById('linha-tempo');
+// script.js atualizado para suporte ao painel completo
 
-let leitoSelecionado = null;
-let dadosLeitos = {};
-let intervalos = {};
+const leitoScroll = document.getElementById('leito-scroll'); const tituloLeito = document.getElementById('titulo-leito'); const painelControle = document.getElementById('painel-controle'); const cronometro = document.getElementById('cronometro'); const linhaTempo = document.getElementById('linha-tempo'); const registroInfo = document.getElementById('registro-info'); const registroFluxo = document.getElementById('registro-fluxo');
 
-function gerarLeitos() {
-  for (let i = 1; i <= 19; i++) {
-    const btn = document.createElement('div');
-    btn.className = 'leito-btn';
-    btn.innerText = `UTI ${i}`;
-    btn.onclick = () => selecionarLeito(i);
-    leitoScroll.appendChild(btn);
-    dadosLeitos[i] = {
-      protocoloAtivo: false,
-      inicio: null,
-      coletaIndex: 0
-    };
-  }
-}
+let leitoSelecionado = null; let dadosLeitos = {}; let intervalos = {};
 
-function selecionarLeito(numero) {
-  leitoSelecionado = numero;
-  const dados = dadosLeitos[numero];
+function gerarLeitos() { for (let i = 1; i <= 19; i++) { const btn = document.createElement('div'); btn.className = 'leito-btn'; btn.innerText = UTI ${i}; btn.onclick = () => selecionarLeito(i); leitoScroll.appendChild(btn); dadosLeitos[i] = { protocoloAtivo: false, inicio: null, coletaIndex: 0, historico: [], suspenso: false }; } }
 
-  tituloLeito.textContent = `Leito ${numero} – Iniciar HNF + Controle TTPa`;
-  painelControle.classList.remove('hidden');
+function selecionarLeito(numero) { leitoSelecionado = numero; const dados = dadosLeitos[numero];
+
+document.querySelectorAll('.leito-btn').forEach(btn => btn.classList.remove('ativo')); document.querySelectorAll('.leito-btn')[numero - 1].classList.add('ativo');
+
+tituloLeito.textContent = Leito ${numero} – Iniciar HNF + Controle TTPa; painelControle.classList.remove('hidden'); atualizarRegistro(numero);
+
+document.querySelectorAll('.ponto').forEach(ponto => ponto.classList.remove('confirmado')); for (let i = 1; i <= dados.coletaIndex; i++) { document.querySelector(.ponto[data-step="${i}"]).classList.add('confirmado'); }
+
+if (dados.protocoloAtivo) iniciarContador(numero); else pararContador(numero); }
+
+function iniciarProtocolo() { if (!leitoSelecionado) return; const dados = dadosLeitos[leitoSelecionado];
+
+dados.protocoloAtivo = true; dados.inicio = Date.now(); dados.suspenso = false; dados.historico.push(Protocolo iniciado em ${new Date().toLocaleString()}); dados.coletaIndex = 0;
+
+document.getElementById('btn-suspender').classList.remove('hidden'); iniciarContador(leitoSelecionado); atualizarRegistro(leitoSelecionado); }
+
+function suspenderProtocolo() { if (!leitoSelecionado) return; const dados = dadosLeitos[leitoSelecionado]; dados.protocoloAtivo = false; dados.suspenso = true; dados.historico.push(Protocolo suspenso em ${new Date().toLocaleString()}); pararContador(leitoSelecionado); atualizarRegistro(leitoSelecionado); document.getElementById('btn-suspender').classList.add('hidden'); cronometro.textContent = '00:00:00'; }
+
+function iniciarContador(numero) { pararContador(numero); intervalos[numero] = setInterval(() => { const dados = dadosLeitos[numero]; if (!dados.protocoloAtivo || !dados.inicio) return;
+
+const restante = 6 * 60 * 60 * 1000 - (Date.now() - dados.inicio);
+if (restante <= 0) {
   cronometro.textContent = '00:00:00';
-
-  // Resetar linha do tempo
-  document.querySelectorAll('.ponto').forEach(ponto => {
-    ponto.classList.remove('ativo', 'confirmado');
-  });
-
-  // Marcar pontos já confirmados se o protocolo estiver ativo
-  if (dados.coletaIndex > 0) {
-    for (let i = 1; i <= dados.coletaIndex; i++) {
-      const ponto = document.querySelector(`.ponto[data-step="${i}"]`);
-      ponto.classList.add('confirmado');
-    }
-  }
-
-  // Reiniciar cronômetro se ativo
-  if (dados.protocoloAtivo) {
-    iniciarContador(numero);
-  } else {
-    pararContador(numero);
-  }
+  return;
 }
 
-function iniciarProtocolo() {
-  if (!leitoSelecionado) return;
+const h = String(Math.floor(restante / 3600000)).padStart(2, '0');
+const m = String(Math.floor((restante % 3600000) / 60000)).padStart(2, '0');
+const s = String(Math.floor((restante % 60000) / 1000)).padStart(2, '0');
 
-  const dados = dadosLeitos[leitoSelecionado];
-  dados.protocoloAtivo = true;
-  dados.inicio = Date.now();
-  dados.coletaIndex = 0;
-
-  iniciarContador(leitoSelecionado);
+if (leitoSelecionado === numero) {
+  cronometro.textContent = `${h}:${m}:${s}`;
 }
 
-function iniciarContador(numero) {
-  pararContador(numero); // evita múltiplos intervalos
+}, 1000); }
 
-  intervalos[numero] = setInterval(() => {
-    const dados = dadosLeitos[numero];
-    if (!dados.protocoloAtivo || !dados.inicio) return;
+function pararContador(numero) { if (intervalos[numero]) { clearInterval(intervalos[numero]); delete intervalos[numero]; } }
 
-    const decorrido = Date.now() - dados.inicio;
-    const restante = 6 * 60 * 60 * 1000 - decorrido;
-    if (restante <= 0) {
-      cronometro.textContent = "00:00:00";
-      return;
-    }
+function confirmarColeta() { if (!leitoSelecionado) return; const dados = dadosLeitos[leitoSelecionado]; if (!dados.protocoloAtivo) return;
 
-    const horas = String(Math.floor(restante / (1000 * 60 * 60))).padStart(2, '0');
-    const minutos = String(Math.floor((restante % (1000 * 60 * 60)) / (1000 * 60))).padStart(2, '0');
-    const segundos = String(Math.floor((restante % (1000 * 60)) / 1000)).padStart(2, '0');
+const index = dados.coletaIndex + 1; const ponto = document.querySelector(.ponto[data-step="${index}"]); if (ponto) ponto.classList.add('confirmado');
 
-    cronometro.textContent = `${horas}:${minutos}:${segundos}`;
-  }, 1000);
-}
+dados.coletaIndex = index; dados.inicio = Date.now(); const tecnico = document.getElementById('nomeTecnico').value; const lab = document.getElementById('nomeLab').value; const enf = document.getElementById('enfermeiroContato').value;
 
-function pararContador(numero) {
-  if (intervalos[numero]) {
-    clearInterval(intervalos[numero]);
-    delete intervalos[numero];
-  }
-}
+dados.historico.push(Coleta ${index} confirmada por ${tecnico || 'Técnico Não Identificado'} / Lab: ${lab || 'Desconhecido'} / Contato: ${enf || 'Desconhecido'} - ${new Date().toLocaleString()}); atualizarRegistro(leitoSelecionado); iniciarContador(leitoSelecionado); }
 
-function confirmarColeta() {
-  if (!leitoSelecionado) return;
+function atualizarRegistro(numero) { const dados = dadosLeitos[numero]; registroInfo.innerHTML = dados.protocoloAtivo ? <p><strong>Ativo desde:</strong> ${new Date(dados.inicio).toLocaleString()}</p> : ''; registroFluxo.innerHTML = dados.historico.map(e => <p>${e}</p>).join(''); }
 
-  const dados = dadosLeitos[leitoSelecionado];
-  if (!dados.protocoloAtivo) return;
+async function abrirLeitor() { const codeReader = new ZXing.BrowserBarcodeReader(); const preview = document.getElementById('video-preview'); preview.classList.remove('hidden');
 
-  const index = dados.coletaIndex + 1;
-  const ponto = document.querySelector(`.ponto[data-step="${index}"]`);
+try { const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video-preview'); alert(Código lido: ${result.text}); preview.classList.add('hidden'); codeReader.reset(); confirmarColeta(); } catch (err) { alert('Erro na leitura do código.'); preview.classList.add('hidden'); codeReader.reset(); } }
 
-  if (ponto) {
-    ponto.classList.add('confirmado');
-    dados.coletaIndex = index;
-  }
+function abrirPopup(tipo) { document.getElementById(popup-${tipo}).classList.remove('hidden'); }
 
-  // Reinicia contador para próxima coleta
-  dados.inicio = Date.now();
-  iniciarContador(leitoSelecionado);
-}
-
-// Popup de instruções
-function abrirPopup(tipo) {
-  document.getElementById(`popup-${tipo}`).classList.remove('hidden');
-}
-
-function fecharPopup(tipo) {
-  document.getElementById(`popup-${tipo}`).classList.add('hidden');
-}
+function fecharPopup(tipo) { document.getElementById(popup-${tipo}).classList.add('hidden'); }
 
 gerarLeitos();
-async function abrirLeitor() {
-  const codeReader = new ZXing.BrowserBarcodeReader();
-  const preview = document.getElementById('video-preview');
-  preview.classList.remove('hidden');
 
-  try {
-    const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video-preview');
-    alert(`Código lido: ${result.text}`);
-    preview.classList.add('hidden');
-    codeReader.reset();
-    confirmarColeta(); // Confirma a coleta após leitura
-  } catch (err) {
-    alert('Erro ao ler o código ou leitura cancelada.');
-    preview.classList.add('hidden');
-    codeReader.reset();
-  }
-}
