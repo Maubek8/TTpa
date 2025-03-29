@@ -10,12 +10,16 @@
 <body>
 
   <header class="topbar">
-    <h1>Protocolo TTPa – UTI</h1>
-    <div class="leito-scroll">
-      <!-- Leitos 1 a 19 com scroll horizontal -->
-      <div class="leito-btn" onclick="selecionarLeito(1)">UTI 1</div>
-      <div class="leito-btn" onclick="selecionarLeito(2)">UTI 2</div>
-      <!-- Repita até UTI 19 (pode ser gerado via JS depois) -->
+    <div class="header-top">
+      <h1>Protocolo TTPa – UTI</h1>
+      <div class="top-buttons">
+        <button onclick="abrirPopup('instrucoes')">Instruções</button>
+        <button onclick="window.open('protocolo.html', '_blank')">Ver Protocolo</button>
+        <button onclick="window.open('fluxograma.html', '_blank')">Fluxograma do Protocolo</button>
+      </div>
+    </div>
+    <div class="leito-scroll" id="leito-scroll">
+      <!-- Leitos 1 a 19 são inseridos via script.js -->
     </div>
   </header>
 
@@ -29,7 +33,6 @@
 
         <h3>Fluxo da Coleta</h3>
         <div class="linha-tempo" id="linha-tempo">
-          <!-- Cada ponto representa uma coleta -->
           <div class="ponto" data-step="1"></div>
           <div class="ponto" data-step="2"></div>
           <div class="ponto" data-step="3"></div>
@@ -39,7 +42,6 @@
         </div>
 
         <button onclick="confirmarColeta()" class="btn-coleta">Confirmar Coleta</button>
-        <!-- Futuro: Leitor de código de barras aqui -->
       </div>
     </div>
 
@@ -51,6 +53,22 @@
   <footer>
     Powered by <strong>Tech4Life</strong>
   </footer>
+
+  <!-- Popup: Instruções -->
+  <div id="popup-instrucoes" class="popup hidden">
+    <div class="popup-content">
+      <h2>Instruções Rápidas</h2>
+      <p>
+        1. Acione o protocolo pelo ramal 8247<br>
+        2. Coletas sagradas a cada 6h<br>
+        3. Usar tubo citratado azul<br>
+        4. Prioridade no laboratório<br>
+        5. Encerramento só por ordem médica<br>
+        6. Confirme com o laboratório antes da suspensão
+      </p>
+      <button onclick="fecharPopup('instrucoes')">Fechar</button>
+    </div>
+  </div>
 
   <script src="script.js"></script>
 </body>
