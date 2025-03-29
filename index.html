@@ -1,14 +1,13 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
+<!DOCTYPE html><html lang="pt-BR">
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Painel TTPa – UTI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
+  <script src="https://unpkg.com/@zxing/library@latest"></script>
 </head>
 <body>
-
   <header class="topbar">
     <div class="header-top">
       <h1>Protocolo TTPa – UTI</h1>
@@ -19,57 +18,53 @@
       </div>
     </div>
     <div class="leito-scroll" id="leito-scroll">
-      <!-- Leitos 1 a 19 são inseridos via script.js -->
+      <!-- Leitos gerados via JS -->
     </div>
-  </header>
-
-  <main class="painel">
+  </header>  <main class="painel">
     <div class="painel-esquerdo">
       <div id="titulo-leito" class="titulo-leito">Selecione um leito</div>
-
       <div class="painel-controle hidden" id="painel-controle">
         <button id="btn-iniciar" onclick="iniciarProtocolo()">Iniciar HNF + Controle TTPa</button>
-        <div class="cronometro" id="cronometro">00:00:00</div>
-
-        <h3>Fluxo da Coleta</h3>
-        <div class="linha-tempo" id="linha-tempo">
-          <div class="ponto" data-step="1"></div>
-          <div class="ponto" data-step="2"></div>
-          <div class="ponto" data-step="3"></div>
-          <div class="ponto" data-step="4"></div>
-          <div class="ponto" data-step="5"></div>
-          <div class="ponto" data-step="6"></div>
-        </div>
-
-        <button onclick="confirmarColeta()" class="btn-coleta">Confirmar Coleta</button>
-      </div>
+        <button id="btn-suspender" class="btn-suspender hidden" onclick="suspenderProtocolo()">Suspender Protocolo</button>
+        <div class="registro-info" id="registro-info"></div>
+        <div class="cronometro" id="cronometro">00:00:00</div><h3>Fluxo da Coleta</h3>
+    <div class="linha-tempo" id="linha-tempo">
+      <div class="ponto" data-step="1"></div>
+      <div class="ponto" data-step="2"></div>
+      <div class="ponto" data-step="3"></div>
+      <div class="ponto" data-step="4"></div>
+      <div class="ponto" data-step="5"></div>
+      <div class="ponto" data-step="6"></div>
     </div>
 
-    <div class="painel-direito">
-      <iframe src="fluxograma.html" class="iframe-fluxograma" title="Fluxograma do Paciente"></iframe>
+    <div class="dados-coleta">
+      <input type="text" id="nomeTecnico" placeholder="Nome do Técnico (enfermagem ou coleta)">
+      <input type="text" id="nomeLab" placeholder="Técnico do Laboratório">
+      <input type="text" id="enfermeiroContato" placeholder="Enfermeiro que ligou">
+      <button onclick="abrirLeitor()" class="btn-coleta">Ler Código de Barras</button>
+      <video id="video-preview" class="hidden"></video>
     </div>
-  </main>
+  </div>
+</div>
 
-  <footer>
+<div class="painel-direito">
+  <iframe src="fluxograma.html" class="iframe-fluxograma" title="Fluxograma do Paciente"></iframe>
+  <div class="registro-fluxo" id="registro-fluxo"></div>
+</div>
+
+  </main>  <footer>
     Powered by <strong>Tech4Life</strong>
-  </footer>
-
-  <!-- Popup: Instruções -->
-  <div id="popup-instrucoes" class="popup hidden">
+  </footer>  <!-- Popup: Instruções -->  <div id="popup-instrucoes" class="popup hidden">
     <div class="popup-content">
       <h2>Instruções Rápidas</h2>
       <p>
         1. Acione o protocolo pelo ramal 8247<br>
-        2. Coletas sagradas a cada 6h<br>
-        3. Usar tubo citratado azul<br>
-        4. Prioridade no laboratório<br>
-        5. Encerramento só por ordem médica<br>
-        6. Confirme com o laboratório antes da suspensão
+        2. Coletas a cada 6h com antecedência de 15min<br>
+        3. Tubo citratado azul<br>
+        4. Registrar técnico da coleta, laboratorista e enfermeiro<br>
+        5. Confirmar coletas com código de barras (quando possível)
       </p>
       <button onclick="fecharPopup('instrucoes')">Fechar</button>
     </div>
-  </div>
-
-  <script src="script.js"></script>
-</body>
+  </div>  <script src="script.js"></script></body>
 </html>
