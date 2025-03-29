@@ -1,59 +1,56 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Painel TTPa – UTI</title>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="style.css">
-  <script src="https://kit.fontawesome.com/a2e0d5c36b.js" crossorigin="anonymous"></script>
 </head>
 <body>
+
   <header class="topbar">
-    <h1>Painel de Monitoramento TTPa – UTI</h1>
-    <div class="top-buttons">
-      <button onclick="abrirPopup('instrucoes')"><i class="fas fa-question-circle"></i> Instruções</button>
-      <button onclick="window.open('protocolo.html', '_blank')"><i class="fas fa-file-alt"></i> Protocolo Completo</button>
-      <button onclick="abrirPopup('fluxograma')"><i class="fas fa-project-diagram"></i> Fluxograma</button>
-      <button onclick="abrirPopup('fluxopaciente')"><i class="fas fa-user-clock"></i> Fluxo do Paciente</button>
+    <h1>Protocolo TTPa – UTI</h1>
+    <div class="leito-scroll">
+      <!-- Leitos 1 a 19 com scroll horizontal -->
+      <div class="leito-btn" onclick="selecionarLeito(1)">UTI 1</div>
+      <div class="leito-btn" onclick="selecionarLeito(2)">UTI 2</div>
+      <!-- Repita até UTI 19 (pode ser gerado via JS depois) -->
     </div>
   </header>
 
-  <main class="grid-container">
-    <!-- Leitos de 1 a 19 -->
-    <div class="grid">
-      <!-- Os leitos serão gerados dinamicamente -->
+  <main class="painel">
+    <div class="painel-esquerdo">
+      <div id="titulo-leito" class="titulo-leito">Selecione um leito</div>
+
+      <div class="painel-controle hidden" id="painel-controle">
+        <button id="btn-iniciar" onclick="iniciarProtocolo()">Iniciar HNF + Controle TTPa</button>
+        <div class="cronometro" id="cronometro">00:00:00</div>
+
+        <h3>Fluxo da Coleta</h3>
+        <div class="linha-tempo" id="linha-tempo">
+          <!-- Cada ponto representa uma coleta -->
+          <div class="ponto" data-step="1"></div>
+          <div class="ponto" data-step="2"></div>
+          <div class="ponto" data-step="3"></div>
+          <div class="ponto" data-step="4"></div>
+          <div class="ponto" data-step="5"></div>
+          <div class="ponto" data-step="6"></div>
+        </div>
+
+        <button onclick="confirmarColeta()" class="btn-coleta">Confirmar Coleta</button>
+        <!-- Futuro: Leitor de código de barras aqui -->
+      </div>
+    </div>
+
+    <div class="painel-direito">
+      <iframe src="fluxograma.html" class="iframe-fluxograma" title="Fluxograma do Paciente"></iframe>
     </div>
   </main>
 
-  <!-- Popups -->
-  <div id="popup-instrucoes" class="popup hidden">
-    <div class="popup-content">
-      <h2>Instruções Rápidas</h2>
-      <p>1. Acione o protocolo pelo ramal 8247<br>
-         2. Coletas sagradas a cada 6h<br>
-         3. Amostra citratada azul, prioridade no laboratório<br>
-         4. Encerramento só por ordem médica<br>
-         5. Confirmação do laboratório antes da suspensão</p>
-      <button onclick="fecharPopup('instrucoes')">Fechar</button>
-    </div>
-  </div>
-
-  <div id="popup-fluxograma" class="popup hidden">
-    <div class="popup-content">
-      <h2>Fluxograma Geral</h2>
-      <img src="fluxograma.png" alt="Fluxograma do Protocolo" style="width: 100%; border-radius: 8px;">
-      <button onclick="fecharPopup('fluxograma')">Fechar</button>
-    </div>
-  </div>
-
-  <div id="popup-fluxopaciente" class="popup hidden">
-    <div class="popup-content">
-      <h2>Fluxo do Paciente Ativo</h2>
-      <div id="info-fluxo"></div>
-      <button onclick="fecharPopup('fluxopaciente')">Fechar</button>
-    </div>
-  </div>
+  <footer>
+    Powered by <strong>Tech4Life</strong>
+  </footer>
 
   <script src="script.js"></script>
 </body>
