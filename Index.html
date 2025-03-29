@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Painel TTPa – UTI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <script src="https://kit.fontawesome.com/a2e0d5c36b.js" crossorigin="anonymous"></script>
+</head>
+<body>
+  <header class="topbar">
+    <h1>Painel de Monitoramento TTPa – UTI</h1>
+    <div class="top-buttons">
+      <button onclick="abrirPopup('instrucoes')"><i class="fas fa-question-circle"></i> Instruções</button>
+      <button onclick="window.open('protocolo.html', '_blank')"><i class="fas fa-file-alt"></i> Protocolo Completo</button>
+      <button onclick="abrirPopup('fluxograma')"><i class="fas fa-project-diagram"></i> Fluxograma</button>
+      <button onclick="abrirPopup('fluxopaciente')"><i class="fas fa-user-clock"></i> Fluxo do Paciente</button>
+    </div>
+  </header>
+
+  <main class="grid-container">
+    <!-- Leitos de 1 a 19 -->
+    <div class="grid">
+      <!-- Os leitos serão gerados dinamicamente -->
+    </div>
+  </main>
+
+  <!-- Popups -->
+  <div id="popup-instrucoes" class="popup hidden">
+    <div class="popup-content">
+      <h2>Instruções Rápidas</h2>
+      <p>1. Acione o protocolo pelo ramal 8247<br>
+         2. Coletas sagradas a cada 6h<br>
+         3. Amostra citratada azul, prioridade no laboratório<br>
+         4. Encerramento só por ordem médica<br>
+         5. Confirmação do laboratório antes da suspensão</p>
+      <button onclick="fecharPopup('instrucoes')">Fechar</button>
+    </div>
+  </div>
+
+  <div id="popup-fluxograma" class="popup hidden">
+    <div class="popup-content">
+      <h2>Fluxograma Geral</h2>
+      <img src="fluxograma.png" alt="Fluxograma do Protocolo" style="width: 100%; border-radius: 8px;">
+      <button onclick="fecharPopup('fluxograma')">Fechar</button>
+    </div>
+  </div>
+
+  <div id="popup-fluxopaciente" class="popup hidden">
+    <div class="popup-content">
+      <h2>Fluxo do Paciente Ativo</h2>
+      <div id="info-fluxo"></div>
+      <button onclick="fecharPopup('fluxopaciente')">Fechar</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
+
+/* style.css */
+
+body {
+  margin: 0;
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f7fa;
+  color: #1f2937;
+}
+
+.topbar {
+  background-color: #111827;
+  color: #ffffff;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.topbar h1 {
+  margin: 0 0 10px 0;
+  font-size: 1.5rem;
+}
+
+.top-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.top-buttons button {
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.top-buttons button:hover {
+  background-color: #1e40af;
+}
+
+.grid-container {
+  padding: 30px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 16px;
+}
+
+.leito {
+  background-color: #e5e7eb;
+  border-radius: 10px;
+  padding: 16px;
+  text-align: center;
+  font-weight: 600;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+  transition: transform 0.2s ease;
+  cursor: pointer;
+  position: relative;
+}
+
+.leito:hover {
+  transform: translateY(-2px);
+}
+
+.leito.ativo {
+  background-color: #10b981;
+  color: white;
+}
+
+.leito.proximo {
+  background-color: #f59e0b;
+  color: white;
+}
+
+.leito.atrasado {
+  background-color: #ef4444;
+  color: white;
+}
+
+.leito button {
+  margin-top: 10px;
+  padding: 6px 10px;
+  font-size: 0.8rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #111827;
+  color: white;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.leito button:hover {
+  background-color: #374151;
+}
+
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup.hidden {
+  display: none;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  text-align: center;
+}
+
+.popup-content h2 {
+  margin-top: 0;
+}
+
+.popup-content button {
+  margin-top: 20px;
+  padding: 10px 16px;
+  background-color: #2563eb;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background-color: #1e40af;
+}
+// script.js
+
+const grid = document.querySelector('.grid');
+const totalLeitos = 19;
+let leitos = [];
+
+// Gera os 19 leitos ao carregar a página
+for (let i = 1; i <= totalLeitos; i++) {
+  const leito = document.createElement('div');
+  leito.classList.add('leito');
+  leito.setAttribute('id', `leito-${i}`);
+  leito.innerHTML = `
+    UTI ${i}
+    <div class="timer" id="timer-${i}"></div>
+    <button onclick="ativarProtocolo(${i})">Ativar Protocolo</button>
+  `;
+  grid.appendChild(leito);
+  leitos[i] = { ativo: false, tempo: null };
+}
+
+function ativarProtocolo(id) {
+  const leito = document.getElementById(`leito-${id}`);
+  const btn = leito.querySelector('button');
+
+  if (!leitos[id].ativo) {
+    // Ativar protocolo
+    leitos[id].ativo = true;
+    leitos[id].tempo = Date.now() + 6 * 60 * 60 * 1000; // 6 horas
+    leito.classList.remove('atrasado', 'proximo');
+    leito.classList.add('ativo');
+    btn.textContent = "Encerrar Protocolo";
+    atualizarTimers();
+  } else {
+    // Encerrar protocolo
+    leitos[id].ativo = false;
+    leitos[id].tempo = null;
+    leito.className = 'leito';
+    leito.querySelector('.timer').textContent = '';
+    btn.textContent = "Ativar Protocolo";
+  }
+}
+
+// Atualiza timers a cada minuto
+setInterval(atualizarTimers, 1000);
+
+function atualizarTimers() {
+  for (let i = 1; i <= totalLeitos; i++) {
+    const leito = document.getElementById(`leito-${i}`);
+    const timer = leito.querySelector('.timer');
+
+    if (leitos[i].ativo && leitos[i].tempo) {
+      const tempoRestante = leitos[i].tempo - Date.now();
+      if (tempoRestante <= 0) {
+        leito.classList.remove('ativo', 'proximo');
+        leito.classList.add('atrasado');
+        timer.textContent = 'Coleta atrasada!';
+      } else {
+        const h = Math.floor(tempoRestante / (1000 * 60 * 60));
+        const m = Math.floor((tempoRestante % (1000 * 60 * 60)) / (1000 * 60));
+        timer.textContent = `Próxima coleta: ${h}h ${m}min`;
+        if (tempoRestante <= 30 * 60 * 1000) {
+          leito.classList.remove('ativo');
+          leito.classList.add('proximo');
+        } else {
+          leito.classList.add('ativo');
+          leito.classList.remove('proximo');
+        }
+      }
+    }
+  }
+}
+
+// Popups
+function abrirPopup(tipo) {
+  document.getElementById(`popup-${tipo}`).classList.remove('hidden');
+}
+
+function fecharPopup(tipo) {
+  document.getElementById(`popup-${tipo}`).classList.add('hidden');
+}
