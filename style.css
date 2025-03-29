@@ -1,81 +1,66 @@
-/* style.css completo e corrigido */
+// script.js atualizado com múltiplos leitos ativos, bolinhas coloridas e registro completo
 
-{ box-sizing: border-box; margin: 0; padding: 0; }
+const leitoScroll = document.getElementById('leito-scroll'); const tituloLeito = document.getElementById('titulo-leito'); const painelControle = document.getElementById('painel-controle'); const cronometro = document.getElementById('cronometro'); const linhaTempo = document.getElementById('linha-tempo'); const registroInfo = document.getElementById('registro-info'); const registroFluxo = document.getElementById('registro-fluxo');
 
+let leitoSelecionado = null; let dadosLeitos = {}; let intervalos = {};
 
-.hidden { display: none !important; }
+function gerarLeitos() { for (let i = 1; i <= 19; i++) { const btn = document.createElement('div'); btn.className = 'leito-btn'; btn.innerText = UTI ${i}; btn.onclick = () => selecionarLeito(i); leitoScroll.appendChild(btn); dadosLeitos[i] = { protocoloAtivo: false, inicio: null, coletaIndex: 0, historico: [], suspenso: false, coletaStatus: [false, false, false, false, false, false], proximaPrevista: null }; } }
 
-body { font-family: 'Inter', sans-serif; background-color: #f4f7fa; color: #1f2937; }
+function selecionarLeito(numero) { leitoSelecionado = numero; const dados = dadosLeitos[numero]; document.querySelectorAll('.leito-btn').forEach(btn => btn.classList.remove('ativo')); document.querySelectorAll('.leito-btn')[numero - 1].classList.add('ativo');
 
-.topbar { background-color: #111827; color: #fff; padding: 20px; }
+tituloLeito.textContent = Leito ${numero} – Iniciar HNF + Controle TTPa; painelControle.classList.remove('hidden'); atualizarRegistro(numero);
 
-.header-top { display: flex; flex-direction: column; gap: 10px; }
+document.querySelectorAll('.ponto').forEach(ponto => ponto.className = 'ponto'); dados.coletaStatus.forEach((status, idx) => { const el = document.querySelector(.ponto[data-step="${idx + 1}"]); if (status === true) el.classList.add('verde'); else if (idx === dados.coletaIndex) el.classList.add('vermelho'); else if (idx < dados.coletaIndex) el.classList.add('amarelo'); });
 
-.header-top h1 { font-size: 1.5rem; }
+if (dados.protocoloAtivo) iniciarContador(numero); else pararContador(numero); }
 
-.top-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
+function iniciarProtocolo() { if (!leitoSelecionado) return; const dados = dadosLeitos[leitoSelecionado]; if (dados.protocoloAtivo) return;
 
-.top-buttons button { background-color: #2563eb; border: none; padding: 10px 16px; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; flex: 1; min-width: 120px; }
+dados.protocoloAtivo = true; dados.inicio = Date.now(); dados.proximaPrevista = Date.now() + 6 * 60 * 60 * 1000; dados.coletaIndex = 0; dados.coletaStatus[0] = false; dados.historico.push(Protocolo iniciado em ${new Date().toLocaleString()});
 
-.top-buttons button:hover { background-color: #1e40af; }
+document.getElementById('btn-suspender').classList.remove('hidden'); iniciarContador(leitoSelecionado); atualizarRegistro(leitoSelecionado); selecionarLeito(leitoSelecionado); }
 
-.leito-scroll { margin-top: 20px; overflow-x: auto; display: flex; gap: 10px; padding-bottom: 10px; }
+function suspenderProtocolo() { if (!leitoSelecionado) return; const dados = dadosLeitos[leitoSelecionado]; dados.protocoloAtivo = false; dados.suspenso = true; dados.historico.push(Protocolo suspenso em ${new Date().toLocaleString()}); pararContador(leitoSelecionado); atualizarRegistro(leitoSelecionado); document.getElementById('btn-suspender').classList.add('hidden'); cronometro.textContent = '00:00:00'; }
 
-.leito-btn { background-color: #e5e7eb; border-radius: 8px; padding: 10px 14px; font-weight: 600; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
+function iniciarContador(numero) { pararContador(numero); intervalos[numero] = setInterval(() => { const dados = dadosLeitos[numero]; if (!dados.protocoloAtivo || !dados.inicio) return;
 
-.leito-btn:hover, .leito-btn.ativo { background-color: #2563eb; color: white; }
+const restante = dados.proximaPrevista - Date.now();
+if (restante <= 0) {
+  if (leitoSelecionado === numero) cronometro.textContent = '00:00:00';
+  return;
+}
 
-.painel { display: flex; flex-wrap: wrap; padding: 20px; gap: 20px; }
+const h = String(Math.floor(restante / 3600000)).padStart(2, '0');
+const m = String(Math.floor((restante % 3600000) / 60000)).padStart(2, '0');
+const s = String(Math.floor((restante % 60000) / 1000)).padStart(2, '0');
 
-.painel-esquerdo, .painel-direito { flex: 1; min-width: 300px; }
+if (leitoSelecionado === numero) {
+  cronometro.textContent = `${h}:${m}:${s}`;
+}
 
-.titulo-leito { font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; }
+}, 1000); }
 
-#btn-iniciar, #btn-suspender { background-color: #10b981; border: none; padding: 10px 14px; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; margin-right: 10px; margin-bottom: 10px; }
+function pararContador(numero) { if (intervalos[numero]) { clearInterval(intervalos[numero]); delete intervalos[numero]; } }
 
-#btn-suspender { background-color: #ef4444; }
+function confirmarColeta() { if (!leitoSelecionado) return; const dados = dadosLeitos[leitoSelecionado]; if (!dados.protocoloAtivo) return;
 
-#btn-iniciar:hover { background-color: #059669; }
+const index = dados.coletaIndex; dados.coletaStatus[index] = true; const el = document.querySelector(.ponto[data-step="${index + 1}"]); if (el) el.className = 'ponto verde';
 
-#btn-suspender:hover { background-color: #b91c1c; }
+const tecnico = document.getElementById('nomeTecnico').value; const lab = document.getElementById('nomeLab').value; const enf = document.getElementById('enfermeiroContato').value;
 
-.cronometro { font-size: 2rem; font-weight: bold; margin: 10px 0 20px; color: #1f2937; }
+dados.historico.push(Coleta ${index + 1} confirmada - Técnico: ${tecnico || '---'}, Lab: ${lab || '---'}, Contato: ${enf || '---'} – ${new Date().toLocaleString()});
 
-.linha-tempo { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
+dados.coletaIndex++; dados.proximaPrevista = Date.now() + 6 * 60 * 60 * 1000; iniciarContador(leitoSelecionado); atualizarRegistro(leitoSelecionado); selecionarLeito(leitoSelecionado); }
 
-.ponto { width: 24px; height: 24px; border-radius: 50%; background-color: #d1d5db; border: 2px solid #9ca3af; transition: background-color 0.3s ease; }
+function atualizarRegistro(numero) { const dados = dadosLeitos[numero]; registroInfo.innerHTML = dados.protocoloAtivo ? <p><strong>Ativo desde:</strong> ${new Date(dados.inicio).toLocaleString()}</p> : ''; registroFluxo.innerHTML = dados.historico.map(e => <p>${e}</p>).join(''); }
 
-.ponto.confirmado { background-color: #10b981; border-color: #10b981; }
+async function abrirLeitor() { const codeReader = new ZXing.BrowserBarcodeReader(); const preview = document.getElementById('video-preview'); preview.classList.remove('hidden');
 
-.btn-coleta { background-color: #1f2937; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
+try { const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video-preview'); alert(Código lido: ${result.text}); preview.classList.add('hidden'); codeReader.reset(); confirmarColeta(); } catch (err) { alert('Erro na leitura do código.'); preview.classList.add('hidden'); codeReader.reset(); } }
 
-.btn-coleta:hover { background-color: #374151; }
+function abrirPopup(tipo) { document.getElementById(popup-${tipo}).classList.remove('hidden'); }
 
-input[type="text"] { padding: 8px; width: 100%; max-width: 100%; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
+function fecharPopup(tipo) { document.getElementById(popup-${tipo}).classList.add('hidden'); }
 
-input[type="text"]:focus { outline: 2px solid #2563eb; border-color: #2563eb; }
-
-.iframe-fluxograma { width: 100%; height: 400px; border: none; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 20px; }
-
-#video-preview { width: 100%; max-width: 400px; border: 2px solid #2563eb; border-radius: 10px; margin-top: 15px; }
-
-footer { text-align: center; padding: 20px; background-color: #f1f5f9; font-size: 0.95rem; color: #4b5563; font-weight: 500; }
-
-.popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 999; }
-
-.popup-content { background: white; padding: 30px; border-radius: 10px; max-width: 500px; width: 90%; text-align: center; box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); }
-
-.popup-content button { margin-top: 20px; background-color: #2563eb; color: white; padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
-
-.popup-content button:hover { background-color: #1e40af; }
-
-.registro-info, .registro-fluxo { margin-top: 20px; font-size: 0.95rem; }
-
-@media (max-width: 768px) { .painel { flex-direction: column; }
-
-.iframe-fluxograma { height: 300px; }
-
-.top-buttons button { flex: 1 1 100%; }
-
-#btn-iniciar, #btn-suspender { width: 100%; margin-bottom: 10px; } }
+gerarLeitos();
 
