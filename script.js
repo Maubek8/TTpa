@@ -121,3 +121,20 @@ function fecharPopup(tipo) {
 }
 
 gerarLeitos();
+async function abrirLeitor() {
+  const codeReader = new ZXing.BrowserBarcodeReader();
+  const preview = document.getElementById('video-preview');
+  preview.classList.remove('hidden');
+
+  try {
+    const result = await codeReader.decodeOnceFromVideoDevice(undefined, 'video-preview');
+    alert(`Código lido: ${result.text}`);
+    preview.classList.add('hidden');
+    codeReader.reset();
+    confirmarColeta(); // Confirma a coleta após leitura
+  } catch (err) {
+    alert('Erro ao ler o código ou leitura cancelada.');
+    preview.classList.add('hidden');
+    codeReader.reset();
+  }
+}
