@@ -1,191 +1,275 @@
-/* style.css completo com suporte à tabela de funções */
-
-{ box-sizing: border-box; margin: 0; padding: 0; }
-
-
-.hidden { display: none !important; }
-
-body { font-family: 'Inter', sans-serif; background-color: #f4f7fa; color: #1f2937; }
-
-.topbar { background-color: #111827; color: #fff; padding: 20px; }
-
-.header-top { display: flex; flex-direction: column; gap: 10px; }
-
-.header-top h1 { font-size: 1.5rem; }
-
-.top-buttons { display: flex; flex-wrap: wrap; gap: 10px; }
-
-.top-buttons button { background-color: #2563eb; border: none; padding: 10px 16px; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; flex: 1; min-width: 120px; }
-
-.top-buttons button:hover { background-color: #1e40af; }
-
-.leito-scroll { margin-top: 20px; overflow-x: auto; display: flex; gap: 10px; padding-bottom: 10px; }
-
-.leito-btn { background-color: #e5e7eb; border-radius: 8px; padding: 10px 14px; font-weight: 600; white-space: nowrap; cursor: pointer; flex-shrink: 0; }
-
-.leito-btn:hover, .leito-btn.ativo { background-color: #2563eb; color: white; }
-
-.painel { display: flex; flex-wrap: wrap; padding: 20px; gap: 20px; }
-
-.painel-esquerdo, .painel-direito { flex: 1; min-width: 300px; }
-
-.titulo-leito { font-size: 1.2rem; margin-bottom: 15px; font-weight: bold; }
-
-#btn-iniciar, #btn-suspender { background-color: #10b981; border: none; padding: 10px 14px; border-radius: 8px; color: white; font-weight: 600; cursor: pointer; margin-right: 10px; margin-bottom: 10px; }
-
-#btn-suspender { background-color: #ef4444; }
-
-#btn-iniciar:hover { background-color: #059669; }
-
-#btn-suspender:hover { background-color: #b91c1c; }
-
-.cronometro { font-size: 2rem; font-weight: bold; margin: 10px 0 20px; color: #1f2937; }
-
-.linha-tempo { display: flex; gap: 10px; justify-content: center; margin-bottom: 20px; }
-
-.ponto { width: 24px; height: 24px; border-radius: 50%; background-color: #d1d5db; border: 2px solid #9ca3af; transition: background-color 0.3s ease; }
-
-.ponto.verde { background-color: #10b981; border-color: #10b981; }
-
-.ponto.amarelo { background-color: #facc15; border-color: #facc15; }
-
-.ponto.vermelho { background-color: #ef4444; border-color: #ef4444; animation: piscar 1s infinite; }
-
-@keyframes piscar { 0% { opacity: 1; } 50% { opacity: 0.4; } 100% { opacity: 1; } }
-
-.btn-coleta { background-color: #1f2937; color: white; border: none; padding: 10px 16px; border-radius: 8px; font-weight: 600; cursor: pointer; margin-top: 10px; }
-
-.btn-coleta:hover { background-color: #374151; }
-
-input[type="text"] { padding: 8px; width: 100%; max-width: 100%; margin-bottom: 10px; border: 1px solid #cbd5e1; border-radius: 6px; }
-
-input[type="text"]:focus { outline: 2px solid #2563eb; border-color: #2563eb; }
-
-.iframe-fluxograma { width: 100%; height: 400px; border: none; border-radius: 10px; box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); margin-bottom: 20px; }
-
-#video-preview { width: 100%; max-width: 400px; border: 2px solid #2563eb; border-radius: 10px; margin-top: 15px; }
-
-footer { text-align: center;// script.js completo para o painel TTPa com 19 leitos, cronômetro persistente e linha do tempo
-
-const leitoScroll = document.getElementById("leito-scroll");
-const painelControle = document.getElementById("painel-controle");
-const tituloLeito = document.getElementById("titulo-leito");
-const cronometro = document.getElementById("cronometro");
-const linhaTempo = document.getElementById("linha-tempo");
-const registroInfo = document.getElementById("registro-info");
-
-let leitoAtual = null;
-let intervalos = {}; // cronômetro por leito
-let tempos = {}; // tempo base por leito
-
-// Geração dos 19 leitos dinamicamente
-for (let i = 1; i <= 19; i++) {
-  const btn = document.createElement("button");
-  btn.textContent = `Leito ${i}`;
-  btn.className = "leito-btn";
-  btn.onclick = () => selecionarLeito(i);
-  leitoScroll.appendChild(btn);
-
-  // Inicializa os dados de tempo e status
-  tempos[i] = 0;
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
-function selecionarLeito(numero) {
-  leitoAtual = numero;
-  tituloLeito.textContent = `Leito ${numero}`;
-  painelControle.classList.remove("hidden");
-  atualizarLinhaTempo();
-  iniciarCronometro();
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: #f4f7fa;
+  color: #1f2937;
 }
 
-function iniciarCronometro() {
-  if (intervalos[leitoAtual]) clearInterval(intervalos[leitoAtual]);
-
-  intervalos[leitoAtual] = setInterval(() => {
-    tempos[leitoAtual]++;
-    const horas = Math.floor(tempos[leitoAtual] / 3600).toString().padStart(2, '0');
-    const minutos = Math.floor((tempos[leitoAtual] % 3600) / 60).toString().padStart(2, '0');
-    const segundos = (tempos[leitoAtual] % 60).toString().padStart(2, '0');
-    cronometro.textContent = `${horas}:${minutos}:${segundos}`;
-  }, 1000);
+header.topbar {
+  background-color: #111827;
+  color: white;
+  padding: 20px;
 }
 
-function atualizarLinhaTempo() {
-  const pontos = linhaTempo.querySelectorAll(".ponto");
-  pontos.forEach((p, idx) => {
-    p.classList.remove("verde", "amarelo", "vermelho");
-    if (idx < 2) p.classList.add("verde");
-    else if (idx < 4) p.classList.add("amarelo");
-    else p.classList.add("vermelho");
-  });
+header h1 {
+  font-size: 1.5rem;
+  margin-bottom: 10px;
 }
 
-function iniciarProtocolo() {
-  registroInfo.textContent = `Protocolo iniciado no Leito ${leitoAtual} - ${new Date().toLocaleTimeString()}`;
-  atualizarLinhaTempo();
+.top-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-bottom: 20px;
 }
 
-function suspenderProtocolo() {
-  clearInterval(intervalos[leitoAtual]);
-  registroInfo.textContent = `Protocolo suspenso no Leito ${leitoAtual} - ${new Date().toLocaleTimeString()}`;
+.top-buttons button {
+  background-color: #2563eb;
+  border: none;
+  padding: 10px 16px;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 120px;
 }
 
-function abrirPopup(id) {
-  document.getElementById("popup-" + id).classList.remove("hidden");
+.top-buttons button:hover {
+  background-color: #1e40af;
 }
 
-function fecharPopup(id) {
-  document.getElementById("popup-" + id).classList.add("hidden");
+.leito-scroll {
+  display: flex;
+  overflow-x: auto;
+  gap: 10px;
+  padding: 10px 0;
 }
 
-function confirmarColeta() {
-  const nomeTecnico = document.getElementById("nomeTecnico").value;
-  const nomeLab = document.getElementById("nomeLab").value;
-  const enfermeiroContato = document.getElementById("enfermeiroContato").value;
-  const codigoBarra = document.getElementById("codigoBarra").value;
-  const hora = new Date().toLocaleTimeString();
-  registroInfo.innerHTML += `<div><strong>Coleta confirmada:</strong> ${hora}<br>Técnico: ${nomeTecnico}, Lab: ${nomeLab}, Enfermeiro: ${enfermeiroContato}, Código: ${codigoBarra}</div>`;
+.leito-btn {
+  background-color: #e5e7eb;
+  border-radius: 8px;
+  padding: 10px 14px;
+  font-weight: 600;
+  white-space: nowrap;
+  cursor: pointer;
+  flex-shrink: 0;
+  transition: background-color 0.3s;
 }
 
+.leito-btn:hover,
+.leito-btn.ativo {
+  background-color: #2563eb;
+  color: white;
+}
 
-O script.js está pronto e já inserido no projeto como solicitado. Ele está adaptado para 19 leitos com:
+main.painel {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
 
-Painel individual por leito
+.painel-leito {
+  padding: 20px;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 1px 4px rgba(0,0,0,0.1);
+}
 
-Cronômetro persistente
+.hidden {
+  display: none !important;
+}
 
-Linha do tempo com cores progressivas
+.titulo-leito {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-bottom: 15px;
+}
 
-Registro de coleta com dados
+input[type="text"] {
+  padding: 10px;
+  border: 1px solid #d1d5db;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  width: 100%;
+  font-size: 1rem;
+}
 
-Compatível com mobile
+input[type="text"]:focus {
+  outline: 2px solid #2563eb;
+  border-color: #2563eb;
+}
 
+button {
+  cursor: pointer;
+}
 
-Se quiser, posso agora revisar o funcionamento total no GitHub ou criar também o index.html completo com integração e os arquivos adicionais (instru.html, protocolo.html, etc.). Deseja seguir com isso?
+#btn-iniciar,
+#btn-suspender {
+  background-color: #10b981;
+  color: white;
+  border: none;
+  padding: 10px 14px;
+  border-radius: 8px;
+  font-weight: 600;
+  margin-right: 10px;
+  margin-bottom: 10px;
+}
 
- padding: 20px; background-color: #f1f5f9; font-size: 0.95rem; color: #4b5563; font-weight: 500; }
+#btn-suspender {
+  background-color: #ef4444;
+}
 
-.popup { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.5); display: flex; justify-content: center; align-items: center; z-index: 999; }
+#btn-iniciar:hover {
+  background-color: #059669;
+}
 
-.popup-content { background: white; padding: 30px; border-radius: 10px; max-width: 600px; width: 90%; text-align: center; box-shadow: 0 0 20px rgba(0, 0, 0, 0.2); overflow-x: auto; }
+#btn-suspender:hover {
+  background-color: #b91c1c;
+}
 
-.popup-content table { border-collapse: collapse; width: 100%; margin-top: 10px; }
+.cronometro {
+  font-size: 2rem;
+  font-weight: bold;
+  margin: 10px 0 20px;
+  color: #1f2937;
+}
 
-.popup-content th, .popup-content td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+.linha-tempo {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  margin-bottom: 20px;
+}
 
-.popup-content thead { background-color: #f3f4f6; }
+.ponto {
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background-color: #d1d5db;
+  border: 2px solid #9ca3af;
+  transition: background-color 0.3s ease;
+}
 
-.popup-content button { margin-top: 20px; background-color: #2563eb; color: white; padding: 10px 16px; border: none; border-radius: 8px; font-weight: 600; cursor: pointer; }
+.ponto.verde {
+  background-color: #10b981;
+  border-color: #10b981;
+}
 
-.popup-content button:hover { background-color: #1e40af; }
+.ponto.amarelo {
+  background-color: #facc15;
+  border-color: #facc15;
+}
 
-.registro-info, .registro-fluxo { margin-top: 20px; font-size: 0.95rem; }
+.ponto.vermelho {
+  background-color: #ef4444;
+  border-color: #ef4444;
+  animation: piscar 1s infinite;
+}
 
-@media (max-width: 768px) { .painel { flex-direction: column; }
+@keyframes piscar {
+  0% { opacity: 1; }
+  50% { opacity: 0.4; }
+  100% { opacity: 1; }
+}
 
-.iframe-fluxograma { height: 300px; }
+.registro-info {
+  margin-top: 20px;
+  font-size: 0.95rem;
+  background-color: #f1f5f9;
+  padding: 10px;
+  border-radius: 8px;
+  color: #374151;
+}
 
-.top-buttons button { flex: 1 1 100%; }
+footer {
+  text-align: center;
+  padding: 15px;
+  background-color: #f3f4f6;
+  font-size: 0.9rem;
+  font-weight: 500;
+  color: #4b5563;
+  margin-top: 40px;
+}
 
-#btn-iniciar, #btn-suspender { width: 100%; margin-bottom: 10px; } }
+/* POPUP */
 
+.popup {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0,0,0,0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 999;
+}
+
+.popup-content {
+  background-color: white;
+  padding: 30px;
+  border-radius: 10px;
+  max-width: 600px;
+  width: 90%;
+  box-shadow: 0 0 20px rgba(0,0,0,0.2);
+  overflow-x: auto;
+  text-align: center;
+}
+
+.popup-content h2 {
+  margin-bottom: 10px;
+}
+
+.popup-content table {
+  border-collapse: collapse;
+  width: 100%;
+  margin-top: 10px;
+}
+
+.popup-content th,
+.popup-content td {
+  border: 1px solid #ccc;
+  padding: 8px;
+  text-align: left;
+}
+
+.popup-content thead {
+  background-color: #f3f4f6;
+}
+
+.popup-content button {
+  margin-top: 20px;
+  background-color: #2563eb;
+  color: white;
+  padding: 10px 16px;
+  border: none;
+  border-radius: 8px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.popup-content button:hover {
+  background-color: #1e40af;
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .top-buttons button {
+    flex: 1 1 100%;
+  }
+
+  .linha-tempo {
+    flex-wrap: wrap;
+  }
+
+  .cronometro {
+    font-size: 1.5rem;
+  }
+}
