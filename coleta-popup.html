@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <title>Registrar Coleta</title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #f9fafb;
+      padding: 20px;
+      margin: 0;
+    }
+
+    h2 {
+      margin-bottom: 10px;
+    }
+
+    input, button {
+      display: block;
+      width: 100%;
+      margin-bottom: 12px;
+      padding: 10px;
+      font-size: 1rem;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+    }
+
+    button {
+      background-color: #2563eb;
+      color: white;
+      font-weight: bold;
+      cursor: pointer;
+      border: none;
+    }
+
+    button:hover {
+      background-color: #1e40af;
+    }
+  </style>
+</head>
+<body>
+  <h2>Registrar Coleta</h2>
+  <form id="formColeta">
+    <input type="text" id="enfermeiro" placeholder="Enfermeiro que ligou" required>
+    <input type="text" id="tecnico" placeholder="Técnico do laboratório" required>
+    <input type="text" id="codigo" placeholder="Código de barras (opcional)">
+    <button type="submit">Confirmar Coleta</button>
+  </form>
+
+  <script>
+    document.getElementById('formColeta').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const enfermeiro = document.getElementById('enfermeiro').value;
+      const tecnico = document.getElementById('tecnico').value;
+      const codigo = document.getElementById('codigo').value;
+      const hora = new Date().toLocaleString();
+
+      const dados = {
+        enfermeiro,
+        tecnico,
+        codigo,
+        hora
+      };
+
+      // Envia dados de volta para o script principal
+      window.opener.postMessage(dados, '*');
+      window.close();
+    });
+  </script>
+</body>
+</html>
