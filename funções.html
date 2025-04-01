@@ -1,0 +1,60 @@
+<!DOCTYPE html><html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Painel TTPa – UTI</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="topbar">
+    <div class="header-top">
+      <h1>Protocolo TTPa – UTI</h1>
+      <div class="top-buttons">
+        <button onclick="window.open('instru.html', '_blank')">Instruções</button>
+        <button onclick="window.open('protocolo.html', '_blank')">Ver Protocolo</button>
+        <button onclick="window.open('fluxograma.html', '_blank')">Fluxograma do Protocolo</button>
+        <button onclick="window.open('funcoes.html', '_blank')">Funções</button>
+      </div>
+    </div>
+    <div class="leito-scroll" id="leito-scroll">
+      <!-- Leitos gerados via JS -->
+    </div>
+  </header>  <main class="painel">
+    <div class="painel-esquerdo">
+      <div id="titulo-leito" class="titulo-leito">Selecione um leito</div>
+      <div class="painel-controle hidden" id="painel-controle">
+        <button id="btn-iniciar" onclick="iniciarProtocolo()">Iniciar HNF + Controle TTPa</button>
+        <button id="btn-suspender" class="btn-suspender hidden" onclick="suspenderProtocolo()">Suspender Protocolo</button><div class="registro-info" id="registro-info"></div>
+    <div class="cronometro" id="cronometro">00:00:00</div>
+
+    <h3>Fluxo da Coleta</h3>
+    <div class="linha-tempo" id="linha-tempo">
+      <div class="ponto" data-step="1"></div>
+      <div class="ponto" data-step="2"></div>
+      <div class="ponto" data-step="3"></div>
+      <div class="ponto" data-step="4"></div>
+      <div class="ponto" data-step="5"></div>
+      <div class="ponto" data-step="6"></div>
+    </div>
+
+    <button onclick="document.getElementById('area-coleta').classList.toggle('hidden')" class="btn-coleta">Registrar Coleta</button>
+    <div id="area-coleta" class="hidden">
+      <input type="text" id="nomeTecnico" placeholder="Nome do Técnico (enfermagem ou coleta)">
+      <input type="text" id="nomeLab" placeholder="Técnico do Laboratório">
+      <input type="text" id="enfermeiroContato" placeholder="Enfermeiro que ligou">
+      <input type="text" id="codigoBarra" placeholder="Código (opcional)">
+      <button onclick="confirmarColeta()" class="btn-coleta">Confirmar Coleta</button>
+    </div>
+  </div>
+</div>
+
+<div class="painel-direito">
+  <iframe src="fluxograma.html" class="iframe-fluxograma" title="Fluxograma do Paciente"></iframe>
+  <div class="registro-fluxo" id="registro-fluxo"></div>
+</div>
+
+  </main>  <footer>
+    Powered by <strong>Tech4Life</strong>
+  </footer>  <script src="script.js"></script></body>
+</html>
